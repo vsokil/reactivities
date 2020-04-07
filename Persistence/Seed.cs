@@ -1,13 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Domain;
 
 namespace Persistence
 {
     public class Seed
     {
-        public static void SeedData(DataContext dataContext)
+        public static void SeedData(DataContext context)
         {
+            if(context.Activities.Any())
+            {
+                return;
+            }
+
             var activities = new List<Activity>
             {
                 new Activity
@@ -102,8 +108,8 @@ namespace Persistence
                 }
             };
 
-            dataContext.Activities.AddRange(activities);
-            dataContext.SaveChanges();
+            context.Activities.AddRange(activities);
+            context.SaveChanges();
         }
     }
 }
