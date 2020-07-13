@@ -9,6 +9,8 @@ const DateInput: React.FC<IProps> = ({
     input,
     width,
     placeholder,
+    date = false,
+    time = false,
     meta: { touched, error },
 }) => {
     return (
@@ -17,6 +19,10 @@ const DateInput: React.FC<IProps> = ({
                 placeholder={placeholder}
                 value={input.value || null}
                 onChange={input.onChange}
+                onBlur={input.onBlur}
+                onKeyDown={(e) => e.preventDefault()}
+                date={date}
+                time={time}
             />
             {touched && !!error && (
                 <Label basic color='red'>{error}</Label>
