@@ -9,21 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ActivitiesController : ControllerBase
+    public class ActivitiesController : BaseController
     {
-        private readonly IMediator _mediator;
-
-        public ActivitiesController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
         [HttpGet]
         public async Task<ActionResult<List<Activity>>> Get(CancellationToken ct)
         {
-            var result = await _mediator.Send(new List.Query(), ct);
+            var result = await Mediator.Send(new List.Query(), ct);
 
             return Ok(result);
         }
@@ -31,7 +22,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Activity>> Get(Guid id, CancellationToken ct)
         {
-            var result = await _mediator.Send(new Details.Query { Id = id }, ct);
+            var result = await Mediator.Send(new Details.Query { Id = id }, ct);
 
             return Ok(result);
         }
@@ -39,7 +30,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<Unit>> Create(Create.Command command, CancellationToken ct)
         {
-            var result = await _mediator.Send(command, ct);
+            var result = await Mediator.Send(command, ct);
 
             return Ok();
         }
@@ -48,7 +39,7 @@ namespace API.Controllers
         public async Task<ActionResult<Unit>> Edit(Guid id, Edit.Command command, CancellationToken ct)
         {
             command.Id = id;
-            var result = await _mediator.Send(command, ct);
+            var result = await Mediator.Send(command, ct);
 
             return Ok();
         }
@@ -56,7 +47,7 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Unit>> Delete(Guid id, CancellationToken ct)
         {
-            var result = await _mediator.Send(new Delete.Command { Id = id }, ct);
+            var result = await Mediator.Send(new Delete.Command { Id = id }, ct);
 
             return Ok();
         }

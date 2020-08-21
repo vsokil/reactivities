@@ -40,7 +40,7 @@ namespace API.Middleware
                 case RestException re:
                     logger.LogError(ex, "REST ERROR");
                     errors = re.Errors;
-                    context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    context.Response.StatusCode = (int)re.Code;
                     break;
                 case Exception e:
                     logger.LogError(ex, "SERVER ERROR");
