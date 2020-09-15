@@ -9,9 +9,9 @@ namespace Application.Validators
             var options = ruleBuider
                 .NotEmpty()
                 .MinimumLength(6).WithMessage("Password must be at least 6 characters")
-                .Matches("[A-Z]").WithMessage("Password must contain1 uppercase letter")
-                .Matches("[a-z]").WithMessage("Password must contain1 lowercase letter")
-                .Matches("[0-9]").WithMessage("Password must contain1 number")
+                .Matches("[A-Z]").WithMessage("Password must contain 1 uppercase letter")
+                .Matches("[a-z]").WithMessage("Password must contain 1 lowercase letter")
+                .Matches("[0-9]").WithMessage("Password must contain 1 number")
                 .Matches("[^a-zA-Z0-9]").WithMessage("Password must non alphanunumeric");
 
             return options;

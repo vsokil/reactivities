@@ -50,7 +50,8 @@ namespace API
             services.AddMediatR(typeof(List.Handler).Assembly);
 
             services
-            .AddControllers(opts => {
+            .AddControllers(opts =>
+            {
                 var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
                 opts.Filters.Add(new AuthorizeFilter(policy));
             })
