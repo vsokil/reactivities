@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Activities;
-using Domain;
+using Infrastructure.Security;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -12,7 +13,7 @@ namespace API.Controllers
     public class ActivitiesController : BaseController
     {
         [HttpGet]
-        public async Task<ActionResult<List<Activity>>> Get(CancellationToken ct)
+        public async Task<ActionResult<List<ActivityDto>>> Get(CancellationToken ct)
         {
             var result = await Mediator.Send(new List.Query(), ct);
 
@@ -20,7 +21,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Activity>> Get(Guid id, CancellationToken ct)
+        public async Task<ActionResult<ActivityDto>> Get(Guid id, CancellationToken ct)
         {
             var result = await Mediator.Send(new Details.Query { Id = id }, ct);
 
@@ -36,6 +37,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Policy = Policies.IsActivityHost)]
         public async Task<ActionResult<Unit>> Edit(Guid id, Edit.Command command, CancellationToken ct)
         {
             command.Id = id;
@@ -45,9 +47,26 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = Policies.IsActivityHost)]
         public async Task<ActionResult<Unit>> Delete(Guid id, CancellationToken ct)
         {
             var result = await Mediator.Send(new Delete.Command { Id = id }, ct);
+
+            return Ok();
+        }
+
+        [HttpPost("{id}/attend")]
+        public async Task<ActionResult<Unit>> Attend(Guid id, CancellationToken ct)
+        {
+            var result = await Mediator.Send(new Attend.Command { Id = id }, ct);
+
+            return Ok();
+        }
+
+        [HttpDelete("{id}/unattend")]
+        public async Task<ActionResult<Unit>> Unattend(Guid id, CancellationToken ct)
+        {
+            var result = await Mediator.Send(new Unattend.Command { Id = id }, ct);
 
             return Ok();
         }

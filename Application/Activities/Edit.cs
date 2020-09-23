@@ -65,7 +65,6 @@ namespace Application.Activities
                 activity.Date = request.Date;
                 activity.City = request.City;
                 activity.Venue = request.Venue;
-
                 await _context.SaveChangesAsync(cancellationToken);
                 
                 return Unit.Value;
