@@ -19,6 +19,6 @@ namespace Application.Activities
 
         public string Venue { get; set; }
 
-        public ICollection<AtendeeDto> Atendees { get; set; }
+        public ICollection<AtendeeDto> Attendees { get; set; }
     }
 }

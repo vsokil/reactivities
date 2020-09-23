@@ -24,8 +24,7 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, hist
         createActivity,
         editActivity,
         submitting,
-        loadActivity,
-        clearActivity } = rootStore.activityStore;
+        loadActivity } = rootStore.activityStore;
 
     const [activity, setActivity] = useState(new ActivtyFormValues());
     const [loading, setLoading] = useState(false);
@@ -37,13 +36,8 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, hist
                 .then((activity) => setActivity(new ActivtyFormValues(activity)))
                 .finally(() => setLoading(false));
         }
-
-        return () => {
-            clearActivity();
-        }
     }, [
         loadActivity,
-        clearActivity,
         match.params.id
     ])
 
@@ -68,7 +62,7 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, hist
         category: isRequired('Category'),
         description: composeValidators(
             isRequired('Description'),
-            hasLengthGreaterThan(4)({ message: 'Sescription needs to be at least t characters' }),
+            hasLengthGreaterThan(4)({ message: 'Description needs to be at least 5 characters' }),
         )(),
         city: isRequired('City'),
         venue: isRequired('Venue'),
