@@ -6,6 +6,7 @@ import { history } from '../..';
 import { toast } from 'react-toastify';
 import { RootStore } from './rootStore';
 import { createAttendee, setActivityProps } from '../common/util/util';
+import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
 export default class ActivityStore {
     rootStore: RootStore;
@@ -20,6 +21,47 @@ export default class ActivityStore {
     @observable loading = false;
     @observable submitting = false;
     @observable target = '';
+    @observable.ref hunConnection: HubConnection | null = null;
+
+    @action createHubConnection = (activityId: string) => {
+        this.hunConnection = new HubConnectionBuilder()
+            .withUrl('https://localhost:5001/chat', {
+                accessTokenFactory: () => this.rootStore.commonStore.token!
+            })
+            .configureLogging(LogLevel.Information)
+            .build();
+
+        this.hunConnection.start()
+            .then(() => console.log(this.hunConnection!.state))
+            .then(() => {
+                console.log("joining group");
+                this.hunConnection?.invoke('AddToGroup', activityId);
+            })
+            .catch((error) => console.log(error));
+
+        this.hunConnection.on('ReceiveComment', comment => {
+            runInAction(() => {
+                this.activity!.comments.push(comment);
+            });
+        });
+    }
+
+    @action stopHubConnection = () => {
+        this.hunConnection?.invoke('RemoveFromGroup', this.activity!.id)
+            .then(() => {
+                this.hunConnection!.stop();
+            })
+            .catch(error => console.log(error));
+    }
+
+    @action addComment = async (values: any) => {
+        values.activityId = this.activity!.id;
+        try {
+            await this.hunConnection!.invoke('SendComment', values);
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     @computed get activitiesByDate() {
         return this.groupActivitiesbyDate(Array.from(this.activityRegistry.values()));
@@ -98,6 +140,7 @@ export default class ActivityStore {
         let attendees: IAttendee[] = [];
         attendees.push(attendee);
         activity.attendees = attendees;
+        activity.comments = [];
         activity.isHost = true;
 
         try {

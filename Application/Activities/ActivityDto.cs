@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Application.Comments;
 
 namespace Application.Activities
 {
@@ -20,5 +21,7 @@ namespace Application.Activities
         public string Venue { get; set; }
 
         public ICollection<AtendeeDto> Attendees { get; set; }
+
+        public ICollection<CommentDto> Comments { get; set; }
     }
 }
