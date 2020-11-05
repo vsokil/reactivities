@@ -20,7 +20,7 @@ namespace Application.Activities
 
         public string Venue { get; set; }
 
-        public ICollection<AtendeeDto> Attendees { get; set; }
+        public ICollection<AttendeeDto> Attendees { get; set; }
 
         public ICollection<CommentDto> Comments { get; set; }
     }

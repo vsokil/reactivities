@@ -16,7 +16,7 @@ const ActivityDetailedChat = () => {
         return () => {
             stopHubConnection();
         }
-    }, [createHubConnection, stopHubConnection]);
+    }, [createHubConnection, stopHubConnection, activity]);
 
     return (
         <Fragment>

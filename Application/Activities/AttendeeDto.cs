@@ -1,6 +1,6 @@
 namespace Application.Activities
 {
-    public class AtendeeDto
+    public class AttendeeDto
     {
         public string UserName { get; set; }
 
@@ -9,5 +9,7 @@ namespace Application.Activities
         public string Image { get; set; }
 
         public bool IsHost { get; set; }
+
+        public bool Following { get; set; }
     }
 }

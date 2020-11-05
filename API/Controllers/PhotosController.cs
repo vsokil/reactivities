@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Application.Photos;
-using Application.Profiles;
 using MediatR;
 
 namespace API.Controllers

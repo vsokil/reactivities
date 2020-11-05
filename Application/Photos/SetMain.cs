@@ -9,7 +9,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application.Profiles
+namespace Application.Photos
 {
     public class SetMain
     {

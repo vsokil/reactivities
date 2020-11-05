@@ -11,10 +11,11 @@ namespace Application.Activities
             CreateMap<Activity, ActivityDto>()
                 .ForMember(x => x.Attendees, opts => opts.MapFrom(x => x.UserActivities));
 
-            CreateMap<UserActivity, AtendeeDto>()
+            CreateMap<UserActivity, AttendeeDto>()
                 .ForMember(x => x.UserName, opts => opts.MapFrom(x => x.AppUser.UserName))
                 .ForMember(x => x.DisplayName, opts => opts.MapFrom(x => x.AppUser.DisplayName))
-                .ForMember(x => x.Image, opts => opts.MapFrom(x => x.AppUser.Photos.FirstOrDefault(x => x.IsMain).Url));
+                .ForMember(x => x.Image, opts => opts.MapFrom(x => x.AppUser.Photos.FirstOrDefault(x => x.IsMain).Url))
+                .ForMember(x => x.Following, opts => opts.MapFrom<FollowingResolver>());
         }
     }
 }
