@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { IActivity } from '../models/activity';
+import { IActivitiesEnvelope, IActivity } from '../models/activity';
 import { history } from '../..';
 import { toast } from 'react-toastify';
 import { IUser, IUserFormValues } from '../models/user';
@@ -52,7 +52,7 @@ const requests = {
 };
 
 const Activities = {
-    list: (): Promise<IActivity[]> => requests.get('/activities'),
+    list: (params: URLSearchParams): Promise<IActivitiesEnvelope> => axios.get('/activities', { params: params }).then(sleep(1000)).then(responseBody),
     details: (id: string) => requests.get(`/activities/${id}`),
     create: (activity: IActivity) => requests.post('/activities', activity),
     update: (activity: IActivity) => requests.put(`/activities/${activity.id}`, activity),
@@ -68,14 +68,15 @@ const User = {
 }
 
 const Profile = {
-    get: (userName: string): Promise<IProfile> => requests.get(`/profile/${userName}`),
+    get: (userName: string): Promise<IProfile> => requests.get(`/profiles/${userName}`),
     uploadPhoto: (photo: Blob): Promise<IPhoto> => requests.postForm('/photos', photo),
     setMainPhoto: (id: string) => requests.post(`/photos/${id}/setMain`, {}),
     deletePhoto: (id: string) => requests.del(`/photos/${id}`),
-    updateProfile: (profile: Partial<IProfile>) => requests.put('/profile', profile),
+    updateProfile: (profile: Partial<IProfile>) => requests.put('/profiles', profile),
     listFollowings: (userName: string, predicate: string) => requests.get(`profiles/${userName}/follow?predicate=${predicate}`),
     follow: (userName: string) => requests.post(`/profiles/${userName}/follow`, {}),
-    unfollow: (userName: string) => requests.del(`/profiles/${userName}/unfollow`)
+    unfollow: (userName: string) => requests.del(`/profiles/${userName}/unfollow`),
+    listActivities: (userName: string, predicate: string) => requests.get(`/profiles/${userName}/activities?predicate=${predicate}`)
 }
 
 export default {

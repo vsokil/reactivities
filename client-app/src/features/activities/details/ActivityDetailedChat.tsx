@@ -35,7 +35,7 @@ const ActivityDetailedChat = () => {
                         <Comment key={comment.id}>
                             <Comment.Avatar src={comment.image || '/assets/user.png'} />
                             <Comment.Content>
-                                <Comment.Author as={Link} to={`/profile/${comment.username}`}>
+                                <Comment.Author as={Link} to={`/profiles/${comment.username}`}>
                                     {comment.displayName}
                                 </Comment.Author>
                                 <Comment.Metadata>

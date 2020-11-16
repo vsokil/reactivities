@@ -34,7 +34,7 @@ const ActivityDetailedHeader: React.FC<{ activity: IActivity }> = ({ activity })
                             <Item.Content>
                                 <Header size='huge' content={activity.title} style={{ color: 'white' }} />
                                 <p>{format(activity.date, 'eeee do MMMM')}</p>
-                                <p>Hosted by <Link to={`/profile/${host.userName}`}><strong>{host.displayName}</strong></Link></p>
+                                <p>Hosted by <Link to={`/profiles/${host.userName}`}><strong>{host.displayName}</strong></Link></p>
                             </Item.Content>
                         </Item>
                     </Item.Group>
