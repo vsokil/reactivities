@@ -1,6 +1,6 @@
 # udemy_aspcore_react
 
-Test project to practive React features
+Test project to practice React features
 
 - ASP.Net Core 3.1
 - EF Core 3.1
