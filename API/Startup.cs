@@ -23,6 +23,7 @@ using Infrastructure.Photos;
 using System.Threading.Tasks;
 using API.SignalR;
 using Application.Profiles;
+using System;
 
 namespace API
 {
@@ -48,8 +49,12 @@ namespace API
             {
                 opts.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000")
-                    .AllowCredentials();
+                    policy
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .WithExposedHeaders("www-authenticate")
+                        .WithOrigins("http://localhost:3000")
+                        .AllowCredentials();
                 });
 
             });
@@ -99,7 +104,9 @@ namespace API
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = key,
                     ValidateAudience = false,
-                    ValidateIssuer = false
+                    ValidateIssuer = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
                 };
 
                 opts.Events = new JwtBearerEvents
@@ -135,8 +142,22 @@ namespace API
                 // app.UseDeveloperExceptionPage();
             }
 
-            // app.UseHttpsRedirection();
+            app.UseXContentTypeOptions();
+            app.UseReferrerPolicy(opt => opt.NoReferrer());
+            app.UseXXssProtection(opt => opt.EnabledWithBlockMode());
+            app.UseXfo(opt => opt.Deny());
+            app.UseCsp(opt => opt
+                .BlockAllMixedContent()
+                .StyleSources(s => s.Self().CustomSources("https://fonts.googleapis.com", "sha256-F4GpCPyRepgP5znjMD8sc7PEjzet5Eef4r09dEGPpTs="))
+                .FontSources(f => f.Self().CustomSources("https://fonts.gstatic.com", "data:"))
+                .FormActions(f => f.Self())
+                .FrameAncestors(f => f.Self())
+                .ImageSources(i => i.Self().CustomSources("https://res.cloudinary.com", "blob:", "data:"))
+                .ScriptSources(s => s.Self().CustomSources("sha256-ma5XxS1EBgt17N22Qq31rOxxRWRfzUTQS1KOtfYwuNo="))
+            );
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
             app.UseRouting();
             app.UseCors("CorsPolicy");
             app.UseAuthentication();
@@ -146,6 +167,7 @@ namespace API
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<ChatHub>("/chat");
+                endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }

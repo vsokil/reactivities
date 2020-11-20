@@ -73,7 +73,7 @@ export default class ActivityStore {
 
     @action createHubConnection = (activityId: string) => {
         this.hunConnection = new HubConnectionBuilder()
-            .withUrl('https://localhost:5001/chat', {
+            .withUrl(process.env.REACT_APP_API_CHAT_URL!, {
                 accessTokenFactory: () => this.rootStore.commonStore.token!
             })
             .configureLogging(LogLevel.Information)
@@ -83,7 +83,8 @@ export default class ActivityStore {
             .then(() => console.log(this.hunConnection!.state))
             .then(() => {
                 console.log("joining group");
-                this.hunConnection?.invoke('AddToGroup', activityId);
+                this.hunConnection?.invoke('AddToGroup', activityId)
+                    .catch((error) => console.log(error));
             })
             .catch((error) => console.log(error));
 
