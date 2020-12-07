@@ -64,13 +64,14 @@ const Activities = {
     delete: (id: string) => requests.del(`/activities/${id}`),
     attend: (id: string) => requests.post(`/activities/${id}/attend`, {}),
     unattend: (id: string) => requests.del(`/activities/${id}/unattend`),
-}
+};
 
 const User = {
     current: (): Promise<IUser> => requests.get('/user'),
     login: (user: IUserFormValues): Promise<IUser> => requests.post('/user/login', user),
-    register: (user: IUserFormValues): Promise<IUser> => requests.post('/user/register', user)
-}
+    register: (user: IUserFormValues): Promise<IUser> => requests.post('/user/register', user),
+    fbLogin: (accessToken: string) => requests.post(`/user/facebook`, { accessToken })
+};
 
 const Profile = {
     get: (userName: string): Promise<IProfile> => requests.get(`/profiles/${userName}`),
@@ -82,7 +83,7 @@ const Profile = {
     follow: (userName: string) => requests.post(`/profiles/${userName}/follow`, {}),
     unfollow: (userName: string) => requests.del(`/profiles/${userName}/unfollow`),
     listActivities: (userName: string, predicate: string) => requests.get(`/profiles/${userName}/activities?predicate=${predicate}`)
-}
+};
 
 export default {
     Activities,
