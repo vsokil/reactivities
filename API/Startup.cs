@@ -129,7 +129,9 @@ namespace API
             services.AddScoped<IUserAccessor, UserAccessor>();
             services.AddScoped<IPhotoAccessor, PhotoAccessor>();
             services.AddScoped<IProfileReader, ProfileReader>();
+            services.AddScoped<IFacebookAccessor, FacebookAccessor>();
             services.Configure<CloudinarySettings>(Configuration.GetSection("Cloudinary"));
+            services.Configure<FacebookAppSettings>(Configuration.GetSection("Authentication:Facebook"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -146,14 +148,14 @@ namespace API
             app.UseReferrerPolicy(opt => opt.NoReferrer());
             app.UseXXssProtection(opt => opt.EnabledWithBlockMode());
             app.UseXfo(opt => opt.Deny());
-            app.UseCsp(opt => opt
+            app.UseCspReportOnly(opt => opt
                 .BlockAllMixedContent()
                 .StyleSources(s => s.Self().CustomSources("https://fonts.googleapis.com", "sha256-F4GpCPyRepgP5znjMD8sc7PEjzet5Eef4r09dEGPpTs="))
-                .FontSources(f => f.Self().CustomSources("https://fonts.gstatic.com", "data:"))
+                .FontSources(f => f.Self().CustomSources("https://fonts.gstatic.com", "https://fonts.googleapis.com", "data:"))
                 .FormActions(f => f.Self())
                 .FrameAncestors(f => f.Self())
-                .ImageSources(i => i.Self().CustomSources("https://res.cloudinary.com", "blob:", "data:"))
-                .ScriptSources(s => s.Self().CustomSources("sha256-ma5XxS1EBgt17N22Qq31rOxxRWRfzUTQS1KOtfYwuNo="))
+                .ImageSources(i => i.Self().CustomSources("https://res.cloudinary.com", "https://web.facebook.com", "https://www.facebook.com", "blob:", "data:"))
+                .ScriptSources(s => s.Self().CustomSources("sha256-ma5XxS1EBgt17N22Qq31rOxxRWRfzUTQS1KOtfYwuNo=", "https://connect.facebook.net"))
             );
 
             app.UseDefaultFiles();

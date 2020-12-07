@@ -1,10 +1,16 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
+using System.Collections.ObjectModel;
 
 namespace Domain
 {
     public class AppUser : IdentityUser
     {
+        public AppUser()
+        {
+            Photos = new Collection<Photo>();
+        }
+
         public string DisplayName { get; set; }
 
         public string Bio { get; set; }
