@@ -33,14 +33,12 @@ namespace Application.User
             public async Task<User> Handle(Query request, CancellationToken cancellationToken)
             {
                 var user = await _userManager.FindByNameAsync(_userAccessor.GetCurrentUserName());
+                var refreshToken = _jwtGenerator.GenerateRefreshToken();
+                user.RefreshTokens.Add(refreshToken);
+                
+                await _userManager.UpdateAsync(user);
 
-                return new User
-                {
-                    DisplayName = user.DisplayName,
-                    UserName = user.UserName,
-                    Token = _jwtGenerator.CreateToken(user),
-                    Image = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
-                };
+                return new User(user, _jwtGenerator, refreshToken.Token);
             }
         }
     }

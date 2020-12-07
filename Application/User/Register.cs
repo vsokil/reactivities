@@ -78,17 +78,13 @@ namespace Application.User
                     UserName = request.UserName
                 };
 
+                var refreshToken = _jwtGenerator.GenerateRefreshToken();
+                user.RefreshTokens.Add(refreshToken);
                 var result = await _userManager.CreateAsync(user, request.Password);
 
                 if (result.Succeeded)
                 {
-                    return new User
-                    {
-                        DisplayName = user.DisplayName,
-                        UserName = user.UserName,
-                        Image = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,
-                        Token = _jwtGenerator.CreateToken(user)
-                    };
+                    return new User(user, _jwtGenerator, refreshToken.Token);
                 }
 
                 throw new Exception("Problem saving changes");

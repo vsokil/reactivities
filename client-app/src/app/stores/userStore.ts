@@ -5,6 +5,7 @@ import { RootStore } from "./rootStore";
 import { history } from "../..";
 
 export default class UserStore {
+    refreshTokenTimeout: any;
     rootStore: RootStore;
 
     constructor(rootStore: RootStore) {
@@ -27,18 +28,13 @@ export default class UserStore {
             });
 
             this.rootStore.commonStore.setToken(user.token);
+            this.startRefreshTokenTimer(user);
             this.rootStore.modalStore.closeModal();
             history.push('/activities');
         }
         catch (error) {
             throw error;
         }
-    }
-
-    @action logout = () => {
-        this.rootStore.commonStore.setToken(null);
-        this.user = null;
-        history.push('/');
     }
 
     @action fbLogin = async (response: any) => {
@@ -48,6 +44,7 @@ export default class UserStore {
             runInAction(() => {
                 this.user = user;
                 this.rootStore.commonStore.setToken(user.token);
+                this.startRefreshTokenTimer(user);
                 this.rootStore.modalStore.closeModal();
                 this.loading = false;
             });
@@ -56,6 +53,12 @@ export default class UserStore {
             this.loading = false;
             throw error;
         }
+    }
+
+    @action logout = () => {
+        this.rootStore.commonStore.setToken(null);
+        this.user = null;
+        history.push('/');
     }
 
     @action getUser = async () => {
@@ -80,11 +83,37 @@ export default class UserStore {
             })
 
             this.rootStore.commonStore.setToken(user.token);
+            this.startRefreshTokenTimer(user);
             this.rootStore.modalStore.closeModal();
             history.push('/activities');
         }
         catch (error) {
             throw error;
         }
+    }
+
+    @action refreshToken = async () => {
+        this.stopRefreshTokenTimer();
+        try {
+            var user = await agent.User.refreshToken();
+            runInAction(() => {
+                this.user = user;
+                this.rootStore.commonStore.setToken(user.token);
+                this.startRefreshTokenTimer(user);
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    private startRefreshTokenTimer(user: IUser) {
+        const jwtToken = JSON.parse(atob(user.token.split('.')[1]));
+        const expires = new Date(jwtToken.exp * 1000);
+        const timeout = expires.getTime() - Date.now() - (60 * 1000);
+        this.refreshTokenTimeout = setTimeout(this.refreshToken, timeout);
+    }
+
+    private stopRefreshTokenTimer() {
+        clearTimeout(this.refreshTokenTimeout);
     }
 }
