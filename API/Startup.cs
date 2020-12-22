@@ -19,6 +19,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using AutoMapper;
+using Infrastructure.Email;
 using Infrastructure.Photos;
 using System.Threading.Tasks;
 using API.SignalR;
@@ -78,12 +79,16 @@ namespace API
                     options.SerializerSettings.DateFormatString = "yyyy'-'MM'-'dd'T'HH':'mm':'ssZ";
                 });
 
-            var builder = services.AddIdentityCore<AppUser>();
+            var builder = services.AddIdentityCore<AppUser>(options => 
+            {
+                options.SignIn.RequireConfirmedEmail = true;
+            });
 
             var identityBuilder = new IdentityBuilder(builder.UserType, services);
             identityBuilder.AddEntityFrameworkStores<DataContext>();
             identityBuilder.AddSignInManager<SignInManager<AppUser>>();
-
+            identityBuilder.AddDefaultTokenProviders();
+            
             services.AddAuthorization(opt =>
             {
                 opt.AddPolicy(Policies.IsActivityHost, policy =>
@@ -130,8 +135,11 @@ namespace API
             services.AddScoped<IPhotoAccessor, PhotoAccessor>();
             services.AddScoped<IProfileReader, ProfileReader>();
             services.AddScoped<IFacebookAccessor, FacebookAccessor>();
+            services.AddScoped<IEmailSender, EmailSender>();
+
             services.Configure<CloudinarySettings>(Configuration.GetSection("Cloudinary"));
             services.Configure<FacebookAppSettings>(Configuration.GetSection("Authentication:Facebook"));
+            services.Configure<SendGridSettings>(Configuration.GetSection("SendGrid"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

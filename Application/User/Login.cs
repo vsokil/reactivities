@@ -50,9 +50,10 @@ namespace Application.User
                 var user = await _userManager.FindByEmailAsync(request.Email);
 
                 if (user == null)
-                {
                     throw new RestException(HttpStatusCode.Unauthorized);
-                }
+
+                if (!user.EmailConfirmed)
+                    throw new RestException(HttpStatusCode.Unauthorized, new { User = "Email is not verified" });
 
                 var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 
